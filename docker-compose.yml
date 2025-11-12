@@ -1,0 +1,23 @@
+version: '3.8'
+services:
+  ros_dev:
+    image: ros:noetic-ros-core
+    container_name: pycharm_ros1_dev
+    
+    volumes:
+      - .:/home/user/catkin_ws 
+      
+    environment:
+      - ROS_MASTER_URI=http://ros_dev:11311
+      - ROS_DISTRO=noetic
+      
+    # Use standard bridge network
+    ports:
+      - "11311:11311"
+      
+    tty: true 
+    stdin_open: true 
+    
+    entrypoint: /bin/bash
+    command: -c "sleep infinity"
+
