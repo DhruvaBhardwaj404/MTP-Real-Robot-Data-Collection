@@ -8,10 +8,14 @@ project(franka_collector)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  cv_bridge
+  roscpp
   rospy
   sensor_msgs
+  cv_bridge
   std_srvs
+  franka_gripper
+  control_msgs
+  trajectory_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -103,11 +107,15 @@ find_package(catkin REQUIRED COMPONENTS
 ## LIBRARIES: libraries you create in this project that dependent projects also need
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
-catkin_package(
+#catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES franka_collector
 #  CATKIN_DEPENDS cv_bridge numpy rospy sensor_msgs std_srvs
 #  DEPENDS system_lib
+#)
+
+catkin_package(
+  CATKIN_DEPENDS roscpp rospy sensor_msgs cv_bridge std_srvs franka_gripper control_msgs trajectory_msgs
 )
 
 ###########

@@ -1,0 +1,8 @@
+prefix=/home/prabhav/ssd_2tb/dhruv/MTP-Real-Robot-Data-Collection/devel
+
+Name: franka_msgs
+Description: Description of franka_msgs
+Version: 0.10.1
+Cflags: -I/home/prabhav/ssd_2tb/dhruv/MTP-Real-Robot-Data-Collection/devel/include
+Libs: -L${prefix}/lib 
+Requires: message_runtime std_msgs sensor_msgs actionlib_msgs

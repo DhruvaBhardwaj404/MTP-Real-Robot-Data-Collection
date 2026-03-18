@@ -67,14 +67,14 @@ set(franka_collector_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(franka_collector_SOURCE_PREFIX /home/user/catkin_ws/src/franka_collector)
-  set(franka_collector_DEVEL_PREFIX /home/user/catkin_ws/devel)
+  set(franka_collector_SOURCE_PREFIX /home/prabhav/ssd_2tb/dhruv/MTP-Real-Robot-Data-Collection/src/franka_collector)
+  set(franka_collector_DEVEL_PREFIX /home/prabhav/ssd_2tb/dhruv/MTP-Real-Robot-Data-Collection/devel)
   set(franka_collector_INSTALL_PREFIX "")
   set(franka_collector_PREFIX ${franka_collector_DEVEL_PREFIX})
 else()
   set(franka_collector_SOURCE_PREFIX "")
   set(franka_collector_DEVEL_PREFIX "")
-  set(franka_collector_INSTALL_PREFIX /home/user/catkin_ws/install)
+  set(franka_collector_INSTALL_PREFIX /home/prabhav/ssd_2tb/dhruv/MTP-Real-Robot-Data-Collection/install)
   set(franka_collector_PREFIX ${franka_collector_INSTALL_PREFIX})
 endif()
 
@@ -118,7 +118,7 @@ endif()
 
 set(libraries "")
 foreach(library ${libraries})
-  # keep build configuration keywords, generator expressions, target names, and absolute libraries as-is
+  # keep build configuration keywords, target names and absolute libraries as-is
   if("${library}" MATCHES "^(debug|optimized|general)$")
     list(APPEND franka_collector_LIBRARIES ${library})
   elseif(${library} MATCHES "^-l")
@@ -146,8 +146,6 @@ foreach(library ${libraries})
       target_link_options("${interface_target_name}" INTERFACE "${library}")
     endif()
     list(APPEND franka_collector_LIBRARIES "${interface_target_name}")
-  elseif(${library} MATCHES "^\\$<")
-    list(APPEND franka_collector_LIBRARIES ${library})
   elseif(TARGET ${library})
     list(APPEND franka_collector_LIBRARIES ${library})
   elseif(IS_ABSOLUTE ${library})
@@ -156,7 +154,7 @@ foreach(library ${libraries})
     set(lib_path "")
     set(lib "${library}-NOTFOUND")
     # since the path where the library is found is returned we have to iterate over the paths manually
-    foreach(path /home/user/catkin_ws/install/lib;/opt/ros/noetic/lib)
+    foreach(path /home/prabhav/ssd_2tb/dhruv/MTP-Real-Robot-Data-Collection/install/lib;/opt/ros/noetic/lib)
       find_library(lib ${library}
         PATHS ${path}
         NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)
@@ -187,7 +185,7 @@ foreach(t ${franka_collector_EXPORTED_TARGETS})
   endif()
 endforeach()
 
-set(depends "")
+set(depends "roscpp;rospy;sensor_msgs;cv_bridge;std_srvs;franka_gripper;control_msgs;trajectory_msgs")
 foreach(depend ${depends})
   string(REPLACE " " ";" depend_list ${depend})
   # the package name of the dependency must be kept in a unique variable so that it is not overwritten in recursive calls

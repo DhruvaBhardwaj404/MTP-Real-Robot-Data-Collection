@@ -7,7 +7,9 @@
 # new environment variables
 
 # modified environment variables
-export CMAKE_PREFIX_PATH="/home/user/catkin_ws/devel:$CMAKE_PREFIX_PATH"
-export PWD='/home/user/catkin_ws/build'
-export ROSLISP_PACKAGE_DIRECTORIES='/home/user/catkin_ws/devel/share/common-lisp'
-export ROS_PACKAGE_PATH="/home/user/catkin_ws/src:$ROS_PACKAGE_PATH"
+export CMAKE_PREFIX_PATH="/home/prabhav/ssd_2tb/dhruv/MTP-Real-Robot-Data-Collection/devel:$CMAKE_PREFIX_PATH"
+export LD_LIBRARY_PATH='/home/prabhav/ssd_2tb/dhruv/MTP-Real-Robot-Data-Collection/devel/lib:/opt/ros/noetic/lib:/opt/ros/noetic/lib/x86_64-linux-gnu:/usr/local/cuda-12.4/lib64'
+export PATH='/opt/ros/noetic/bin:/home/prabhav/miniconda3/condabin:/usr/local/cuda-12.4/bin:/home/prabhav/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'
+export PWD='/media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build'
+export ROSLISP_PACKAGE_DIRECTORIES='/home/prabhav/ssd_2tb/dhruv/MTP-Real-Robot-Data-Collection/devel/share/common-lisp'
+export ROS_PACKAGE_PATH="/home/prabhav/ssd_2tb/dhruv/MTP-Real-Robot-Data-Collection/src:$ROS_PACKAGE_PATH"

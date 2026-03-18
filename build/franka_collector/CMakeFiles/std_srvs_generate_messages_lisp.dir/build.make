@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/user/catkin_ws/src
+CMAKE_SOURCE_DIR = /home/prabhav/ssd_2tb/dhruv/MTP-Real-Robot-Data-Collection/src
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/user/catkin_ws/build
+CMAKE_BINARY_DIR = /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build
 
 # Utility rule file for std_srvs_generate_messages_lisp.
 
@@ -63,10 +63,10 @@ franka_collector/CMakeFiles/std_srvs_generate_messages_lisp.dir/build: std_srvs_
 .PHONY : franka_collector/CMakeFiles/std_srvs_generate_messages_lisp.dir/build
 
 franka_collector/CMakeFiles/std_srvs_generate_messages_lisp.dir/clean:
-	cd /home/user/catkin_ws/build/franka_collector && $(CMAKE_COMMAND) -P CMakeFiles/std_srvs_generate_messages_lisp.dir/cmake_clean.cmake
+	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build/franka_collector && $(CMAKE_COMMAND) -P CMakeFiles/std_srvs_generate_messages_lisp.dir/cmake_clean.cmake
 .PHONY : franka_collector/CMakeFiles/std_srvs_generate_messages_lisp.dir/clean
 
 franka_collector/CMakeFiles/std_srvs_generate_messages_lisp.dir/depend:
-	cd /home/user/catkin_ws/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/user/catkin_ws/src /home/user/catkin_ws/src/franka_collector /home/user/catkin_ws/build /home/user/catkin_ws/build/franka_collector /home/user/catkin_ws/build/franka_collector/CMakeFiles/std_srvs_generate_messages_lisp.dir/DependInfo.cmake --color=$(COLOR)
+	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/prabhav/ssd_2tb/dhruv/MTP-Real-Robot-Data-Collection/src /home/prabhav/ssd_2tb/dhruv/MTP-Real-Robot-Data-Collection/src/franka_collector /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build/franka_collector /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build/franka_collector/CMakeFiles/std_srvs_generate_messages_lisp.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : franka_collector/CMakeFiles/std_srvs_generate_messages_lisp.dir/depend
 

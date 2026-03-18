@@ -2,7 +2,7 @@
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "/home/user/catkin_ws/install")
+  set(CMAKE_INSTALL_PREFIX "/home/prabhav/ssd_2tb/dhruv/MTP-Real-Robot-Data-Collection/install")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 

@@ -1,6 +1,6 @@
 # CMake generated Testfile for 
-# Source directory: /home/user/catkin_ws/src/franka_collector
-# Build directory: /home/user/catkin_ws/build/franka_collector
+# Source directory: /home/prabhav/ssd_2tb/dhruv/MTP-Real-Robot-Data-Collection/src/franka_collector
+# Build directory: /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build/franka_collector
 # 
 # This file includes the relevant testing commands required for 
 # testing this directory and lists subdirectories to be tested as well.

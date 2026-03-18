@@ -1,8 +1,8 @@
-# Install script for directory: /home/user/catkin_ws/src/franka_collector
+# Install script for directory: /home/prabhav/ssd_2tb/dhruv/MTP-Real-Robot-Data-Collection/src/franka_collector
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "/home/user/catkin_ws/install")
+  set(CMAKE_INSTALL_PREFIX "/home/prabhav/ssd_2tb/dhruv/MTP-Real-Robot-Data-Collection/install")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -38,17 +38,17 @@ if(NOT DEFINED CMAKE_CROSSCOMPILING)
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" TYPE FILE FILES "/home/user/catkin_ws/build/franka_collector/catkin_generated/installspace/franka_collector.pc")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" TYPE FILE FILES "/media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build/franka_collector/catkin_generated/installspace/franka_collector.pc")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/franka_collector/cmake" TYPE FILE FILES
-    "/home/user/catkin_ws/build/franka_collector/catkin_generated/installspace/franka_collectorConfig.cmake"
-    "/home/user/catkin_ws/build/franka_collector/catkin_generated/installspace/franka_collectorConfig-version.cmake"
+    "/media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build/franka_collector/catkin_generated/installspace/franka_collectorConfig.cmake"
+    "/media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build/franka_collector/catkin_generated/installspace/franka_collectorConfig-version.cmake"
     )
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/franka_collector" TYPE FILE FILES "/home/user/catkin_ws/src/franka_collector/package.xml")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/franka_collector" TYPE FILE FILES "/home/prabhav/ssd_2tb/dhruv/MTP-Real-Robot-Data-Collection/src/franka_collector/package.xml")
 endif()
 

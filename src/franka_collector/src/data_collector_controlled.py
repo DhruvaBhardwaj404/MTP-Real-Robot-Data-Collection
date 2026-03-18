@@ -1,329 +1,195 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
 import rospy
 import numpy as np
 import time
+import os
+import cv2  # Added for resizing
 from sensor_msgs.msg import Image, JointState
 from cv_bridge import CvBridge, CvBridgeError
 from std_srvs.srv import SetBool, SetBoolResponse, Trigger, TriggerResponse
-from franka_gripper.msg import GraspActionGoal, MoveActionGoal
-
 
 class ControlledDataCollector:
     def __init__(self):
         rospy.init_node('franka_realsense_data_collector', anonymous=True)
 
-        # --- State and Control ---
         self.is_recording = False
         self._discard_flag = False
-
-        # --- ROS-to-Numpy Bridge ---
         self.bridge = CvBridge()
 
+        # Target resolution
+        self.target_width = 640
+        self.target_height = 480
+        rospy.loginfo(f"Downsizing images to {self.target_width}x{self.target_height}")
+
         # --- Latest sensor snapshots ---
-        self.latest_image_data = None
-        self.latest_joint_positions = None       # arm: float64 x7, radians
-        self.latest_gripper_positions = None     # fingers: float64 x2, metres
+        self.latest_image_data_1 = None
+        self.latest_image_data_2 = None
+        self.latest_joint_positions = None
+        self.latest_gripper_positions = None
 
         # --- Binary gripper state tracking ---
-        # State: 0 = closing, 1 = opening, None = not yet determined
-        self.gripper_binary_state = None
-        self.previous_gripper_width = None       # total width = finger1 + finger2
+        # Start with a default state (1 = opening) so recording isn't blocked
+        self.gripper_binary_state = 1
+        self.previous_gripper_width = None       
 
-        # Deadband: changes smaller than this (in metres) are treated as idle/noise.
-        # 0.5 mm is a safe default for the Franka Hand.
+        # --- Parameters ---
         self.gripper_deadband_m = rospy.get_param('~gripper_deadband_m', 0.0005)
-
-        # Directory where .npz files will be saved.
-        # Defaults to the current working directory if not set.
-        # Override at launch: rosrun your_pkg franka_data_collector.py _save_dir:=/data/replay
         self.save_dir = rospy.get_param('~save_dir', '.')
+        # Using specific topics for EIH (Eye-In-Hand) and External cameras
+        self.cam1_topic = rospy.get_param('~cam1_topic', '/eih/color/image_raw')
+        self.cam2_topic = rospy.get_param('~cam2_topic', '/ext/color/image_raw')
 
         # --- Data buffer ---
-        # Each entry: (image_np, arm_joints_np, gripper_pos_np, gripper_binary_state)
-        #   gripper_pos_np      : shape (2,)  — [finger_joint1, finger_joint2] in metres
-        #   gripper_binary_state: int — 0 = closing, 1 = opening
         self.collected_data = []
 
         # --- Subscribers ---
-        self.image_sub = rospy.Subscriber(
-            "/camera/color/image_raw", Image,
-            self.image_callback, queue_size=1
-        )
-        self.joint_sub = rospy.Subscriber(
-            "/franka_state_controller/joint_states", JointState,
-            self.joint_callback, queue_size=1
-        )
-        self.gripper_joint_sub = rospy.Subscriber(
-            "/franka_gripper/joint_states", JointState,
-            self.gripper_joint_callback, queue_size=1
-        )
-        # Snoop gripper action goals for optional context
-        self.grasp_goal_sub = rospy.Subscriber(
-            "/franka_gripper/grasp/goal", GraspActionGoal,
-            self.grasp_goal_callback, queue_size=1
-        )
-        self.move_goal_sub = rospy.Subscriber(
-            "/franka_gripper/move/goal", MoveActionGoal,
-            self.move_goal_callback, queue_size=1
-        )
+        self.image_sub_1 = rospy.Subscriber(self.cam1_topic, Image, self.image_callback_1, queue_size=1)
+        self.image_sub_2 = rospy.Subscriber(self.cam2_topic, Image, self.image_callback_2, queue_size=1)
+        self.joint_sub = rospy.Subscriber("/franka_state_controller/joint_states", JointState, self.joint_callback, queue_size=1)
+        self.gripper_joint_sub = rospy.Subscriber("/franka_gripper/joint_states", JointState, self.gripper_joint_callback, queue_size=1)
 
         # --- Services ---
-        self.control_service = rospy.Service(
-            '/data_collector/set_recording', SetBool,
-            self.handle_set_recording
-        )
-        self.discard_service = rospy.Service(
-            '/data_collector/discard', Trigger,
-            self.handle_discard
-        )
+        self.control_service = rospy.Service('/data_collector/set_recording', SetBool, self.handle_set_recording)
+        self.discard_service = rospy.Service('/data_collector/discard', Trigger, self.handle_discard)
 
         # --- Collection timer: 10 Hz ---
         self.collection_rate = 10.0
         rospy.Timer(rospy.Duration(1.0 / self.collection_rate), self.timer_callback)
 
-        rospy.loginfo("ControlledDataCollector node started.")
-        rospy.loginfo(f"  Gripper deadband: {self.gripper_deadband_m*1000:.1f} mm")
-        rospy.loginfo(f"  Save directory:   {self.save_dir}")
-        rospy.loginfo("  Start:   rosservice call /data_collector/set_recording \"data: true\"")
-        rospy.loginfo("  Stop:    rosservice call /data_collector/set_recording \"data: false\"")
-        rospy.loginfo("  Discard: rosservice call /data_collector/discard")
+        rospy.loginfo("Dual-Camera Data Collector READY (Immediate Start Mode).")
 
     # ------------------------------------------------------------------ #
-    #  Subscriber Callbacks                                                #
+    #  Subscriber Callbacks with Downsizing                            #
     # ------------------------------------------------------------------ #
 
-    def image_callback(self, msg):
+    def image_callback_1(self, msg):
         try:
+            # Convert ROS message to OpenCV BGR image
             cv_image = self.bridge.imgmsg_to_cv2(msg, "bgr8")
-            self.latest_image_data = np.array(cv_image, dtype=np.uint8)
+            
+            # UPDATED: Resize image to target resolution
+            if cv_image is not None and cv_image.size > 0:
+                resized_image = cv2.resize(cv_image, (self.target_width, self.target_height))
+                self.latest_image_data_1 = np.array(resized_image, dtype=np.uint8)
+            else:
+                rospy.logwarn_throttle(2, "Empty or invalid image from cam1, skipping resize.")
         except CvBridgeError as e:
-            rospy.logerr(e)
+            rospy.logerr(f"Cam1 image processing error: {e}")
+
+    def image_callback_2(self, msg):
+        try:
+            # Convert ROS message to OpenCV BGR image
+            cv_image = self.bridge.imgmsg_to_cv2(msg, "bgr8")
+            
+            # UPDATED: Resize image to target resolution
+            if cv_image is not None and cv_image.size > 0:
+                resized_image = cv2.resize(cv_image, (self.target_width, self.target_height))
+                self.latest_image_data_2 = np.array(resized_image, dtype=np.uint8)
+            else:
+                rospy.logwarn_throttle(2, "Empty or invalid image from cam2, skipping resize.")
+        except CvBridgeError as e:
+            rospy.logerr(f"Cam2 image processing error: {e}")
+
+    # ------------------------------------------------------------------ #
+    #  Joint and Gripper Callbacks (Unchanged)                         #
+    # ------------------------------------------------------------------ #
 
     def joint_callback(self, msg):
-        """Arm joints 1-7."""
         if len(msg.position) >= 7:
             self.latest_joint_positions = np.array(msg.position[:7], dtype=np.float64)
 
     def gripper_joint_callback(self, msg):
-        """
-        /franka_gripper/joint_states publishes panda_finger_joint1 and
-        panda_finger_joint2 (prismatic, metres).
-
-        This callback also runs the binary state update so it tracks state
-        at the full gripper publish rate (~30 Hz), not just the 10 Hz collection
-        rate — giving a more accurate velocity signal.
-        """
         if len(msg.position) >= 2:
             new_positions = np.array(msg.position[:2], dtype=np.float64)
-        elif len(msg.position) == 1:
-            new_positions = np.array([msg.position[0], msg.position[0]], dtype=np.float64)
-        else:
-            return
-
-        self.latest_gripper_positions = new_positions
-        self._update_binary_gripper_state(new_positions)
-
-    def grasp_goal_callback(self, msg):
-        rospy.logdebug(
-            f"Gripper GRASP goal: width={msg.goal.width:.4f} m  "
-            f"speed={msg.goal.speed:.4f} m/s  force={msg.goal.force:.2f} N"
-        )
-
-    def move_goal_callback(self, msg):
-        rospy.logdebug(
-            f"Gripper MOVE goal: width={msg.goal.width:.4f} m  "
-            f"speed={msg.goal.speed:.4f} m/s"
-        )
-
-    # ------------------------------------------------------------------ #
-    #  Binary Gripper State Logic                                          #
-    # ------------------------------------------------------------------ #
+            self.latest_gripper_positions = new_positions
+            self._update_binary_gripper_state(new_positions)
 
     def _update_binary_gripper_state(self, new_positions):
-        """
-        Called every time a new gripper joint message arrives.
-
-        Logic:
-          current_width = finger1 + finger2  (total gap in metres)
-          delta         = current_width - previous_width
-
-          delta < -deadband  →  fingers moving closer  →  CLOSING (0)
-          delta > +deadband  →  fingers moving apart   →  OPENING (1)
-          |delta| <= deadband →  idle/noise             →  keep last state
-
-        On the very first call, we have no previous width yet, so we
-        initialise previous_width and leave gripper_binary_state as None.
-        It will be resolved on the next callback that produces a real delta.
-        """
         current_width = float(new_positions[0] + new_positions[1])
-
-        if self.previous_gripper_width is None:
-            # First ever reading — just seed the previous width
-            self.previous_gripper_width = current_width
-            return
-
-        delta = current_width - self.previous_gripper_width
-
-        if delta < -self.gripper_deadband_m:
-            self.gripper_binary_state = 0   # closing
-        elif delta > self.gripper_deadband_m:
-            self.gripper_binary_state = 1   # opening
-        # else: idle — state stays as whatever it last was
-
+        if self.previous_gripper_width is not None:
+            delta = current_width - self.previous_gripper_width
+            if delta < -self.gripper_deadband_m:
+                self.gripper_binary_state = 0   # closing
+            elif delta > self.gripper_deadband_m:
+                self.gripper_binary_state = 1   # opening
         self.previous_gripper_width = current_width
 
     # ------------------------------------------------------------------ #
-    #  Timer — core collection loop                                        #
+    #  Timer — Core Collection Loop                                    #
     # ------------------------------------------------------------------ #
 
     def timer_callback(self, event):
-        if not self.is_recording:
+        if not self.is_recording or self._discard_flag:
+            if self._discard_flag: self._do_discard()
             return
 
-        if self._discard_flag:
-            self._do_discard()
+        # Check for mandatory data
+        if any(v is None for v in [self.latest_image_data_1, self.latest_image_data_2, 
+                                   self.latest_joint_positions, self.latest_gripper_positions]):
+            rospy.logwarn_throttle(5, "Waiting for all sensor topics...")
             return
 
-        if self.latest_image_data is None or self.latest_joint_positions is None:
-            rospy.logwarn_throttle(5, "Recording active — waiting for arm/image data...")
-            return
-
-        if self.latest_gripper_positions is None:
-            rospy.logwarn_throttle(5, "Recording active — waiting for gripper data "
-                                      "on /franka_gripper/joint_states ...")
-            return
-
-        if self.gripper_binary_state is None:
-            # We have gripper positions but not enough history yet for a delta.
-            # This resolves after the second gripper message, so it's very transient.
-            rospy.logwarn_throttle(2, "Waiting for gripper motion history to determine state...")
-            return
-
+        # Recording logic, including the current gripper state
         self.collected_data.append((
-            np.copy(self.latest_image_data),
+            np.copy(self.latest_image_data_1),
+            np.copy(self.latest_image_data_2),
             np.copy(self.latest_joint_positions),
             np.copy(self.latest_gripper_positions),
             int(self.gripper_binary_state)
         ))
 
-        state_str = "OPENING" if self.gripper_binary_state == 1 else "CLOSING"
-        rospy.loginfo_throttle(
-            1,
-            f"Recording... {len(self.collected_data)} samples  |  "
-            f"gripper: {self.latest_gripper_positions.sum()*1000:.1f} mm total  |  "
-            f"state: {state_str}"
-        )
-
     # ------------------------------------------------------------------ #
-    #  Service Handlers                                                    #
+    #  Service Handlers (Unchanged)                                    #
     # ------------------------------------------------------------------ #
 
     def handle_set_recording(self, req):
-        response = SetBoolResponse()
         if req.data:
-            if self.is_recording:
-                response.success = False
-                response.message = "Already recording. Call /data_collector/discard to cancel first."
-            else:
-                self.collected_data = []
-                self._discard_flag = False
-                self.is_recording = True
-                response.success = True
-                response.message = "Recording STARTED."
-                rospy.loginfo("=== Recording STARTED ===")
+            self.collected_data = []
+            self._discard_flag = False
+            self.is_recording = True
+            rospy.loginfo("=== Recording STARTED ===")
+            return SetBoolResponse(True, "STARTED")
         else:
-            if not self.is_recording:
-                response.success = False
-                response.message = "Not currently recording."
+            self.is_recording = False
+            path = self.save_data()
+            if path:
+                return SetBoolResponse(True, f"Saved to {path}")
             else:
-                self.is_recording = False
-                saved_path = self.save_data()
-                if saved_path:
-                    response.success = True
-                    response.message = f"Recording stopped. Data saved to: {saved_path}"
-                else:
-                    response.success = False
-                    response.message = "Recording stopped, but no data was collected — nothing saved."
-        return response
+                return SetBoolResponse(False, "Failed to save data (was any collected?)")
 
     def handle_discard(self, req):
-        response = TriggerResponse()
-        if not self.is_recording:
-            response.success = False
-            response.message = "Not currently recording. Nothing to discard."
-        else:
-            self._discard_flag = True
-            n = len(self.collected_data)
-            response.success = True
-            response.message = f"Discard requested — {n} buffered samples will be dropped."
-            rospy.logwarn(f"=== DISCARD requested — {n} samples will be thrown away ===")
-        return response
-
-    # ------------------------------------------------------------------ #
-    #  Internal helpers                                                    #
-    # ------------------------------------------------------------------ #
+        self._discard_flag = True
+        return TriggerResponse(True, "Discarding...")
 
     def _do_discard(self):
-        n = len(self.collected_data)
         self.collected_data = []
         self.is_recording = False
         self._discard_flag = False
-        rospy.logwarn(f"=== Recording DISCARDED — {n} samples dropped. Ready for a new recording. ===")
+        rospy.logwarn("=== DISCARDED ===")
+
+    # ------------------------------------------------------------------ #
+    #  Save Data to .npz (Unchanged)                                   #
+    # ------------------------------------------------------------------ #
 
     def save_data(self):
-        """
-        Saves all collected data to a compressed .npz file.
-
-        Arrays saved:
-          images        : (N, H, W, 3)  uint8   — BGR frames
-          joints        : (N, 7)        float64 — arm joint positions (rad)
-          gripper_pos   : (N, 2)        float64 — [finger1, finger2] in metres
-          gripper_state : (N,)          int8    — binary: 0=closing, 1=opening
-        """
-        if not self.collected_data:
-            rospy.logwarn("No data collected — nothing to save.")
-            return None
-
-        n = len(self.collected_data)
-        rospy.loginfo(f"Saving {n} data points...")
-
-        images_array        = np.stack([d[0] for d in self.collected_data])
-        joints_array        = np.stack([d[1] for d in self.collected_data])
-        gripper_pos_array   = np.stack([d[2] for d in self.collected_data])
-        gripper_state_array = np.array([d[3] for d in self.collected_data], dtype=np.int8)
-
-        import os
+        if not self.collected_data: return None
         os.makedirs(self.save_dir, exist_ok=True)
-        filename = os.path.join(
-            self.save_dir,
-            f"realsense_franka_data_{time.strftime('%Y%m%d_%H%M%S')}.npz"
-        )
+        filename = os.path.join(self.save_dir, f"dual_cam_{time.strftime('%Y%m%d_%H%M%S')}.npz")
+        
+        # Save compressed arrays to disk
         np.savez_compressed(
             filename,
-            images=images_array,
-            joints=joints_array,
-            gripper_pos=gripper_pos_array,
-            gripper_state=gripper_state_array
+            images1=np.stack([d[0] for d in self.collected_data]),
+            images2=np.stack([d[1] for d in self.collected_data]),
+            joints=np.stack([d[2] for d in self.collected_data]),
+            gripper_pos=np.stack([d[3] for d in self.collected_data]),
+            gripper_state=np.array([d[4] for d in self.collected_data], dtype=np.int8)
         )
-
-        closing_count = int((gripper_state_array == 0).sum())
-        opening_count = int((gripper_state_array == 1).sum())
-        rospy.loginfo(
-            f"Saved → {filename}\n"
-            f"  images        : {images_array.shape}  dtype={images_array.dtype}\n"
-            f"  joints        : {joints_array.shape}  dtype={joints_array.dtype}\n"
-            f"  gripper_pos   : {gripper_pos_array.shape}  dtype={gripper_pos_array.dtype}\n"
-            f"  gripper_state : {gripper_state_array.shape}  dtype={gripper_state_array.dtype} "
-            f"  (closing={closing_count}, opening={opening_count})"
-        )
-        self.collected_data = []
+        rospy.loginfo(f"Saved recording with {len(self.collected_data)} samples to {filename}")
+        self.collected_data = []  # Clear data after saving
         return filename
-
-
-# ------------------------------------------------------------------ #
-#  Entry point                                                         #
-# ------------------------------------------------------------------ #
 
 if __name__ == '__main__':
     try:

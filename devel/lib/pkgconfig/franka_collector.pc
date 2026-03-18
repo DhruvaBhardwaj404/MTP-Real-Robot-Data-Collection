@@ -1,8 +1,8 @@
-prefix=/home/user/catkin_ws/devel
+prefix=/home/prabhav/ssd_2tb/dhruv/MTP-Real-Robot-Data-Collection/devel
 
 Name: franka_collector
 Description: Description of franka_collector
 Version: 0.0.0
 Cflags: 
 Libs: -L${prefix}/lib 
-Requires: 
+Requires: roscpp rospy sensor_msgs cv_bridge std_srvs franka_gripper control_msgs trajectory_msgs
