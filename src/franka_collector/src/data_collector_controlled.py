@@ -5,7 +5,7 @@ import rospy
 import numpy as np
 import time
 import os
-import cv2  # Added for resizing
+import cv2
 from sensor_msgs.msg import Image, JointState
 from cv_bridge import CvBridge, CvBridgeError
 from std_srvs.srv import SetBool, SetBoolResponse, Trigger, TriggerResponse
@@ -27,17 +27,16 @@ class ControlledDataCollector:
         self.latest_image_data_1 = None
         self.latest_image_data_2 = None
         self.latest_joint_positions = None
+        self.latest_joint_velocities = None   # NEW
         self.latest_gripper_positions = None
 
         # --- Binary gripper state tracking ---
-        # Start with a default state (1 = opening) so recording isn't blocked
         self.gripper_binary_state = 1
-        self.previous_gripper_width = None       
+        self.previous_gripper_width = None
 
         # --- Parameters ---
         self.gripper_deadband_m = rospy.get_param('~gripper_deadband_m', 0.0005)
         self.save_dir = rospy.get_param('~save_dir', '.')
-        # Using specific topics for EIH (Eye-In-Hand) and External cameras
         self.cam1_topic = rospy.get_param('~cam1_topic', '/eih/color/image_raw')
         self.cam2_topic = rospy.get_param('~cam2_topic', '/ext/color/image_raw')
 
@@ -58,18 +57,15 @@ class ControlledDataCollector:
         self.collection_rate = 10.0
         rospy.Timer(rospy.Duration(1.0 / self.collection_rate), self.timer_callback)
 
-        rospy.loginfo("Dual-Camera Data Collector READY (Immediate Start Mode).")
+        rospy.loginfo("Dual-Camera Data Collector READY.")
 
     # ------------------------------------------------------------------ #
-    #  Subscriber Callbacks with Downsizing                            #
+    #  Image Callbacks                                                    #
     # ------------------------------------------------------------------ #
 
     def image_callback_1(self, msg):
         try:
-            # Convert ROS message to OpenCV BGR image
             cv_image = self.bridge.imgmsg_to_cv2(msg, "bgr8")
-            
-            # UPDATED: Resize image to target resolution
             if cv_image is not None and cv_image.size > 0:
                 resized_image = cv2.resize(cv_image, (self.target_width, self.target_height))
                 self.latest_image_data_1 = np.array(resized_image, dtype=np.uint8)
@@ -80,10 +76,7 @@ class ControlledDataCollector:
 
     def image_callback_2(self, msg):
         try:
-            # Convert ROS message to OpenCV BGR image
             cv_image = self.bridge.imgmsg_to_cv2(msg, "bgr8")
-            
-            # UPDATED: Resize image to target resolution
             if cv_image is not None and cv_image.size > 0:
                 resized_image = cv2.resize(cv_image, (self.target_width, self.target_height))
                 self.latest_image_data_2 = np.array(resized_image, dtype=np.uint8)
@@ -93,12 +86,17 @@ class ControlledDataCollector:
             rospy.logerr(f"Cam2 image processing error: {e}")
 
     # ------------------------------------------------------------------ #
-    #  Joint and Gripper Callbacks (Unchanged)                         #
+    #  Joint Callback — now records velocities too                       #
     # ------------------------------------------------------------------ #
 
     def joint_callback(self, msg):
         if len(msg.position) >= 7:
-            self.latest_joint_positions = np.array(msg.position[:7], dtype=np.float64)
+            self.latest_joint_positions  = np.array(msg.position[:7], dtype=np.float64)
+            self.latest_joint_velocities = np.array(msg.velocity[:7], dtype=np.float64)  # NEW
+
+    # ------------------------------------------------------------------ #
+    #  Gripper Callbacks                                                  #
+    # ------------------------------------------------------------------ #
 
     def gripper_joint_callback(self, msg):
         if len(msg.position) >= 2:
@@ -117,31 +115,37 @@ class ControlledDataCollector:
         self.previous_gripper_width = current_width
 
     # ------------------------------------------------------------------ #
-    #  Timer — Core Collection Loop                                    #
+    #  Timer — Core Collection Loop                                      #
     # ------------------------------------------------------------------ #
 
     def timer_callback(self, event):
         if not self.is_recording or self._discard_flag:
-            if self._discard_flag: self._do_discard()
+            if self._discard_flag:
+                self._do_discard()
             return
 
-        # Check for mandatory data
-        if any(v is None for v in [self.latest_image_data_1, self.latest_image_data_2, 
-                                   self.latest_joint_positions, self.latest_gripper_positions]):
+        # Check all sensors are available — including velocities now
+        if any(v is None for v in [
+            self.latest_image_data_1,
+            self.latest_image_data_2,
+            self.latest_joint_positions,
+            self.latest_joint_velocities,   # NEW
+            self.latest_gripper_positions
+        ]):
             rospy.logwarn_throttle(5, "Waiting for all sensor topics...")
             return
 
-        # Recording logic, including the current gripper state
         self.collected_data.append((
             np.copy(self.latest_image_data_1),
             np.copy(self.latest_image_data_2),
             np.copy(self.latest_joint_positions),
+            np.copy(self.latest_joint_velocities),   # NEW
             np.copy(self.latest_gripper_positions),
             int(self.gripper_binary_state)
         ))
 
     # ------------------------------------------------------------------ #
-    #  Service Handlers (Unchanged)                                    #
+    #  Service Handlers                                                   #
     # ------------------------------------------------------------------ #
 
     def handle_set_recording(self, req):
@@ -170,26 +174,29 @@ class ControlledDataCollector:
         rospy.logwarn("=== DISCARDED ===")
 
     # ------------------------------------------------------------------ #
-    #  Save Data to .npz (Unchanged)                                   #
+    #  Save Data                                                          #
     # ------------------------------------------------------------------ #
 
     def save_data(self):
-        if not self.collected_data: return None
+        if not self.collected_data:
+            return None
         os.makedirs(self.save_dir, exist_ok=True)
         filename = os.path.join(self.save_dir, f"dual_cam_{time.strftime('%Y%m%d_%H%M%S')}.npz")
-        
-        # Save compressed arrays to disk
+
         np.savez_compressed(
             filename,
-            images1=np.stack([d[0] for d in self.collected_data]),
-            images2=np.stack([d[1] for d in self.collected_data]),
-            joints=np.stack([d[2] for d in self.collected_data]),
-            gripper_pos=np.stack([d[3] for d in self.collected_data]),
-            gripper_state=np.array([d[4] for d in self.collected_data], dtype=np.int8)
+            images1        = np.stack([d[0] for d in self.collected_data]),
+            images2        = np.stack([d[1] for d in self.collected_data]),
+            joints         = np.stack([d[2] for d in self.collected_data]),
+            joint_velocities = np.stack([d[3] for d in self.collected_data]),   # NEW
+            gripper_pos    = np.stack([d[4] for d in self.collected_data]),
+            gripper_state  = np.array([d[5] for d in self.collected_data], dtype=np.int8)
         )
-        rospy.loginfo(f"Saved recording with {len(self.collected_data)} samples to {filename}")
-        self.collected_data = []  # Clear data after saving
+
+        rospy.loginfo(f"Saved {len(self.collected_data)} samples to {filename}")
+        self.collected_data = []
         return filename
+
 
 if __name__ == '__main__':
     try:
