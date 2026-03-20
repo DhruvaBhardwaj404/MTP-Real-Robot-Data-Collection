@@ -52,3 +52,11 @@ if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/franka_collector" TYPE FILE FILES "/home/prabhav/ssd_2tb/dhruv/MTP-Real-Robot-Data-Collection/src/franka_collector/package.xml")
 endif()
 
+if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/franka_collector" TYPE PROGRAM FILES "/media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build/franka_collector/catkin_generated/installspace/franka_data_collector.py")
+endif()
+
+if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/franka_collector" TYPE PROGRAM FILES "/media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build/franka_collector/catkin_generated/installspace/franka_replay_moveit.py")
+endif()
+

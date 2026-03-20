@@ -68,18 +68,6 @@ install/strip/fast: preinstall/fast
 	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
 .PHONY : install/strip/fast
 
-# Special rule for the target install/local
-install/local: preinstall
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
-	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
-.PHONY : install/local
-
-# Special rule for the target install/local
-install/local/fast: preinstall/fast
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
-	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
-.PHONY : install/local/fast
-
 # Special rule for the target install
 install: preinstall
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
@@ -102,16 +90,16 @@ list_install_components/fast: list_install_components
 
 .PHONY : list_install_components/fast
 
-# Special rule for the target test
-test:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running tests..."
-	/usr/bin/ctest --force-new-ctest-process $(ARGS)
-.PHONY : test
+# Special rule for the target rebuild_cache
+rebuild_cache:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
+	/usr/bin/cmake -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+.PHONY : rebuild_cache
 
-# Special rule for the target test
-test/fast: test
+# Special rule for the target rebuild_cache
+rebuild_cache/fast: rebuild_cache
 
-.PHONY : test/fast
+.PHONY : rebuild_cache/fast
 
 # Special rule for the target edit_cache
 edit_cache:
@@ -124,16 +112,28 @@ edit_cache/fast: edit_cache
 
 .PHONY : edit_cache/fast
 
-# Special rule for the target rebuild_cache
-rebuild_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
-	/usr/bin/cmake -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
-.PHONY : rebuild_cache
+# Special rule for the target test
+test:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running tests..."
+	/usr/bin/ctest --force-new-ctest-process $(ARGS)
+.PHONY : test
 
-# Special rule for the target rebuild_cache
-rebuild_cache/fast: rebuild_cache
+# Special rule for the target test
+test/fast: test
 
-.PHONY : rebuild_cache/fast
+.PHONY : test/fast
+
+# Special rule for the target install/local
+install/local: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
+	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local
+
+# Special rule for the target install/local
+install/local/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
+	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local/fast
 
 # The main all target
 all: cmake_check_build_system
@@ -168,19 +168,34 @@ depend:
 .PHONY : depend
 
 # Convenience name for target.
-franka_ros/franka_example_controllers/CMakeFiles/_franka_example_controllers_generate_messages_check_deps_JointTorqueComparison.dir/rule:
-	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f CMakeFiles/Makefile2 franka_ros/franka_example_controllers/CMakeFiles/_franka_example_controllers_generate_messages_check_deps_JointTorqueComparison.dir/rule
-.PHONY : franka_ros/franka_example_controllers/CMakeFiles/_franka_example_controllers_generate_messages_check_deps_JointTorqueComparison.dir/rule
+franka_ros/franka_example_controllers/CMakeFiles/teleop_gripper_node.dir/rule:
+	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f CMakeFiles/Makefile2 franka_ros/franka_example_controllers/CMakeFiles/teleop_gripper_node.dir/rule
+.PHONY : franka_ros/franka_example_controllers/CMakeFiles/teleop_gripper_node.dir/rule
 
 # Convenience name for target.
-_franka_example_controllers_generate_messages_check_deps_JointTorqueComparison: franka_ros/franka_example_controllers/CMakeFiles/_franka_example_controllers_generate_messages_check_deps_JointTorqueComparison.dir/rule
+teleop_gripper_node: franka_ros/franka_example_controllers/CMakeFiles/teleop_gripper_node.dir/rule
 
-.PHONY : _franka_example_controllers_generate_messages_check_deps_JointTorqueComparison
+.PHONY : teleop_gripper_node
 
 # fast build rule for target.
-_franka_example_controllers_generate_messages_check_deps_JointTorqueComparison/fast:
-	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f franka_ros/franka_example_controllers/CMakeFiles/_franka_example_controllers_generate_messages_check_deps_JointTorqueComparison.dir/build.make franka_ros/franka_example_controllers/CMakeFiles/_franka_example_controllers_generate_messages_check_deps_JointTorqueComparison.dir/build
-.PHONY : _franka_example_controllers_generate_messages_check_deps_JointTorqueComparison/fast
+teleop_gripper_node/fast:
+	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f franka_ros/franka_example_controllers/CMakeFiles/teleop_gripper_node.dir/build.make franka_ros/franka_example_controllers/CMakeFiles/teleop_gripper_node.dir/build
+.PHONY : teleop_gripper_node/fast
+
+# Convenience name for target.
+franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers.dir/rule:
+	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f CMakeFiles/Makefile2 franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers.dir/rule
+.PHONY : franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers.dir/rule
+
+# Convenience name for target.
+franka_example_controllers: franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers.dir/rule
+
+.PHONY : franka_example_controllers
+
+# fast build rule for target.
+franka_example_controllers/fast:
+	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers.dir/build.make franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers.dir/build
+.PHONY : franka_example_controllers/fast
 
 # Convenience name for target.
 franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers_generate_messages.dir/rule:
@@ -198,169 +213,34 @@ franka_example_controllers_generate_messages/fast:
 .PHONY : franka_example_controllers_generate_messages/fast
 
 # Convenience name for target.
-franka_ros/franka_example_controllers/CMakeFiles/visualization_msgs_generate_messages_py.dir/rule:
-	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f CMakeFiles/Makefile2 franka_ros/franka_example_controllers/CMakeFiles/visualization_msgs_generate_messages_py.dir/rule
-.PHONY : franka_ros/franka_example_controllers/CMakeFiles/visualization_msgs_generate_messages_py.dir/rule
+franka_ros/franka_example_controllers/CMakeFiles/_franka_example_controllers_generate_messages_check_deps_JointTorqueComparison.dir/rule:
+	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f CMakeFiles/Makefile2 franka_ros/franka_example_controllers/CMakeFiles/_franka_example_controllers_generate_messages_check_deps_JointTorqueComparison.dir/rule
+.PHONY : franka_ros/franka_example_controllers/CMakeFiles/_franka_example_controllers_generate_messages_check_deps_JointTorqueComparison.dir/rule
 
 # Convenience name for target.
-visualization_msgs_generate_messages_py: franka_ros/franka_example_controllers/CMakeFiles/visualization_msgs_generate_messages_py.dir/rule
+_franka_example_controllers_generate_messages_check_deps_JointTorqueComparison: franka_ros/franka_example_controllers/CMakeFiles/_franka_example_controllers_generate_messages_check_deps_JointTorqueComparison.dir/rule
 
-.PHONY : visualization_msgs_generate_messages_py
+.PHONY : _franka_example_controllers_generate_messages_check_deps_JointTorqueComparison
 
 # fast build rule for target.
-visualization_msgs_generate_messages_py/fast:
-	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f franka_ros/franka_example_controllers/CMakeFiles/visualization_msgs_generate_messages_py.dir/build.make franka_ros/franka_example_controllers/CMakeFiles/visualization_msgs_generate_messages_py.dir/build
-.PHONY : visualization_msgs_generate_messages_py/fast
+_franka_example_controllers_generate_messages_check_deps_JointTorqueComparison/fast:
+	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f franka_ros/franka_example_controllers/CMakeFiles/_franka_example_controllers_generate_messages_check_deps_JointTorqueComparison.dir/build.make franka_ros/franka_example_controllers/CMakeFiles/_franka_example_controllers_generate_messages_check_deps_JointTorqueComparison.dir/build
+.PHONY : _franka_example_controllers_generate_messages_check_deps_JointTorqueComparison/fast
 
 # Convenience name for target.
-franka_ros/franka_example_controllers/CMakeFiles/visualization_msgs_generate_messages_nodejs.dir/rule:
-	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f CMakeFiles/Makefile2 franka_ros/franka_example_controllers/CMakeFiles/visualization_msgs_generate_messages_nodejs.dir/rule
-.PHONY : franka_ros/franka_example_controllers/CMakeFiles/visualization_msgs_generate_messages_nodejs.dir/rule
+franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers_generate_messages_py.dir/rule:
+	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f CMakeFiles/Makefile2 franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers_generate_messages_py.dir/rule
+.PHONY : franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers_generate_messages_py.dir/rule
 
 # Convenience name for target.
-visualization_msgs_generate_messages_nodejs: franka_ros/franka_example_controllers/CMakeFiles/visualization_msgs_generate_messages_nodejs.dir/rule
+franka_example_controllers_generate_messages_py: franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers_generate_messages_py.dir/rule
 
-.PHONY : visualization_msgs_generate_messages_nodejs
+.PHONY : franka_example_controllers_generate_messages_py
 
 # fast build rule for target.
-visualization_msgs_generate_messages_nodejs/fast:
-	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f franka_ros/franka_example_controllers/CMakeFiles/visualization_msgs_generate_messages_nodejs.dir/build.make franka_ros/franka_example_controllers/CMakeFiles/visualization_msgs_generate_messages_nodejs.dir/build
-.PHONY : visualization_msgs_generate_messages_nodejs/fast
-
-# Convenience name for target.
-franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers_genpy.dir/rule:
-	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f CMakeFiles/Makefile2 franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers_genpy.dir/rule
-.PHONY : franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers_genpy.dir/rule
-
-# Convenience name for target.
-franka_example_controllers_genpy: franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers_genpy.dir/rule
-
-.PHONY : franka_example_controllers_genpy
-
-# fast build rule for target.
-franka_example_controllers_genpy/fast:
-	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers_genpy.dir/build.make franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers_genpy.dir/build
-.PHONY : franka_example_controllers_genpy/fast
-
-# Convenience name for target.
-franka_ros/franka_example_controllers/CMakeFiles/visualization_msgs_generate_messages_eus.dir/rule:
-	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f CMakeFiles/Makefile2 franka_ros/franka_example_controllers/CMakeFiles/visualization_msgs_generate_messages_eus.dir/rule
-.PHONY : franka_ros/franka_example_controllers/CMakeFiles/visualization_msgs_generate_messages_eus.dir/rule
-
-# Convenience name for target.
-visualization_msgs_generate_messages_eus: franka_ros/franka_example_controllers/CMakeFiles/visualization_msgs_generate_messages_eus.dir/rule
-
-.PHONY : visualization_msgs_generate_messages_eus
-
-# fast build rule for target.
-visualization_msgs_generate_messages_eus/fast:
-	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f franka_ros/franka_example_controllers/CMakeFiles/visualization_msgs_generate_messages_eus.dir/build.make franka_ros/franka_example_controllers/CMakeFiles/visualization_msgs_generate_messages_eus.dir/build
-.PHONY : visualization_msgs_generate_messages_eus/fast
-
-# Convenience name for target.
-franka_ros/franka_example_controllers/CMakeFiles/visualization_msgs_generate_messages_lisp.dir/rule:
-	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f CMakeFiles/Makefile2 franka_ros/franka_example_controllers/CMakeFiles/visualization_msgs_generate_messages_lisp.dir/rule
-.PHONY : franka_ros/franka_example_controllers/CMakeFiles/visualization_msgs_generate_messages_lisp.dir/rule
-
-# Convenience name for target.
-visualization_msgs_generate_messages_lisp: franka_ros/franka_example_controllers/CMakeFiles/visualization_msgs_generate_messages_lisp.dir/rule
-
-.PHONY : visualization_msgs_generate_messages_lisp
-
-# fast build rule for target.
-visualization_msgs_generate_messages_lisp/fast:
-	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f franka_ros/franka_example_controllers/CMakeFiles/visualization_msgs_generate_messages_lisp.dir/build.make franka_ros/franka_example_controllers/CMakeFiles/visualization_msgs_generate_messages_lisp.dir/build
-.PHONY : visualization_msgs_generate_messages_lisp/fast
-
-# Convenience name for target.
-franka_ros/franka_example_controllers/CMakeFiles/visualization_msgs_generate_messages_cpp.dir/rule:
-	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f CMakeFiles/Makefile2 franka_ros/franka_example_controllers/CMakeFiles/visualization_msgs_generate_messages_cpp.dir/rule
-.PHONY : franka_ros/franka_example_controllers/CMakeFiles/visualization_msgs_generate_messages_cpp.dir/rule
-
-# Convenience name for target.
-visualization_msgs_generate_messages_cpp: franka_ros/franka_example_controllers/CMakeFiles/visualization_msgs_generate_messages_cpp.dir/rule
-
-.PHONY : visualization_msgs_generate_messages_cpp
-
-# fast build rule for target.
-visualization_msgs_generate_messages_cpp/fast:
-	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f franka_ros/franka_example_controllers/CMakeFiles/visualization_msgs_generate_messages_cpp.dir/build.make franka_ros/franka_example_controllers/CMakeFiles/visualization_msgs_generate_messages_cpp.dir/build
-.PHONY : visualization_msgs_generate_messages_cpp/fast
-
-# Convenience name for target.
-franka_ros/franka_example_controllers/CMakeFiles/dynamic_reconfigure_generate_messages_eus.dir/rule:
-	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f CMakeFiles/Makefile2 franka_ros/franka_example_controllers/CMakeFiles/dynamic_reconfigure_generate_messages_eus.dir/rule
-.PHONY : franka_ros/franka_example_controllers/CMakeFiles/dynamic_reconfigure_generate_messages_eus.dir/rule
-
-# Convenience name for target.
-dynamic_reconfigure_generate_messages_eus: franka_ros/franka_example_controllers/CMakeFiles/dynamic_reconfigure_generate_messages_eus.dir/rule
-
-.PHONY : dynamic_reconfigure_generate_messages_eus
-
-# fast build rule for target.
-dynamic_reconfigure_generate_messages_eus/fast:
-	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f franka_ros/franka_example_controllers/CMakeFiles/dynamic_reconfigure_generate_messages_eus.dir/build.make franka_ros/franka_example_controllers/CMakeFiles/dynamic_reconfigure_generate_messages_eus.dir/build
-.PHONY : dynamic_reconfigure_generate_messages_eus/fast
-
-# Convenience name for target.
-franka_ros/franka_example_controllers/CMakeFiles/dynamic_reconfigure_gencfg.dir/rule:
-	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f CMakeFiles/Makefile2 franka_ros/franka_example_controllers/CMakeFiles/dynamic_reconfigure_gencfg.dir/rule
-.PHONY : franka_ros/franka_example_controllers/CMakeFiles/dynamic_reconfigure_gencfg.dir/rule
-
-# Convenience name for target.
-dynamic_reconfigure_gencfg: franka_ros/franka_example_controllers/CMakeFiles/dynamic_reconfigure_gencfg.dir/rule
-
-.PHONY : dynamic_reconfigure_gencfg
-
-# fast build rule for target.
-dynamic_reconfigure_gencfg/fast:
-	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f franka_ros/franka_example_controllers/CMakeFiles/dynamic_reconfigure_gencfg.dir/build.make franka_ros/franka_example_controllers/CMakeFiles/dynamic_reconfigure_gencfg.dir/build
-.PHONY : dynamic_reconfigure_gencfg/fast
-
-# Convenience name for target.
-franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers_gencpp.dir/rule:
-	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f CMakeFiles/Makefile2 franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers_gencpp.dir/rule
-.PHONY : franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers_gencpp.dir/rule
-
-# Convenience name for target.
-franka_example_controllers_gencpp: franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers_gencpp.dir/rule
-
-.PHONY : franka_example_controllers_gencpp
-
-# fast build rule for target.
-franka_example_controllers_gencpp/fast:
-	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers_gencpp.dir/build.make franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers_gencpp.dir/build
-.PHONY : franka_example_controllers_gencpp/fast
-
-# Convenience name for target.
-franka_ros/franka_example_controllers/CMakeFiles/dynamic_reconfigure_generate_messages_lisp.dir/rule:
-	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f CMakeFiles/Makefile2 franka_ros/franka_example_controllers/CMakeFiles/dynamic_reconfigure_generate_messages_lisp.dir/rule
-.PHONY : franka_ros/franka_example_controllers/CMakeFiles/dynamic_reconfigure_generate_messages_lisp.dir/rule
-
-# Convenience name for target.
-dynamic_reconfigure_generate_messages_lisp: franka_ros/franka_example_controllers/CMakeFiles/dynamic_reconfigure_generate_messages_lisp.dir/rule
-
-.PHONY : dynamic_reconfigure_generate_messages_lisp
-
-# fast build rule for target.
-dynamic_reconfigure_generate_messages_lisp/fast:
-	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f franka_ros/franka_example_controllers/CMakeFiles/dynamic_reconfigure_generate_messages_lisp.dir/build.make franka_ros/franka_example_controllers/CMakeFiles/dynamic_reconfigure_generate_messages_lisp.dir/build
-.PHONY : dynamic_reconfigure_generate_messages_lisp/fast
-
-# Convenience name for target.
-franka_ros/franka_example_controllers/CMakeFiles/dynamic_reconfigure_generate_messages_py.dir/rule:
-	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f CMakeFiles/Makefile2 franka_ros/franka_example_controllers/CMakeFiles/dynamic_reconfigure_generate_messages_py.dir/rule
-.PHONY : franka_ros/franka_example_controllers/CMakeFiles/dynamic_reconfigure_generate_messages_py.dir/rule
-
-# Convenience name for target.
-dynamic_reconfigure_generate_messages_py: franka_ros/franka_example_controllers/CMakeFiles/dynamic_reconfigure_generate_messages_py.dir/rule
-
-.PHONY : dynamic_reconfigure_generate_messages_py
-
-# fast build rule for target.
-dynamic_reconfigure_generate_messages_py/fast:
-	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f franka_ros/franka_example_controllers/CMakeFiles/dynamic_reconfigure_generate_messages_py.dir/build.make franka_ros/franka_example_controllers/CMakeFiles/dynamic_reconfigure_generate_messages_py.dir/build
-.PHONY : dynamic_reconfigure_generate_messages_py/fast
+franka_example_controllers_generate_messages_py/fast:
+	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers_generate_messages_py.dir/build.make franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers_generate_messages_py.dir/build
+.PHONY : franka_example_controllers_generate_messages_py/fast
 
 # Convenience name for target.
 franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers_generate_messages_cpp.dir/rule:
@@ -378,19 +258,34 @@ franka_example_controllers_generate_messages_cpp/fast:
 .PHONY : franka_example_controllers_generate_messages_cpp/fast
 
 # Convenience name for target.
-franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers_generate_messages_py.dir/rule:
-	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f CMakeFiles/Makefile2 franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers_generate_messages_py.dir/rule
-.PHONY : franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers_generate_messages_py.dir/rule
+franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers_genpy.dir/rule:
+	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f CMakeFiles/Makefile2 franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers_genpy.dir/rule
+.PHONY : franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers_genpy.dir/rule
 
 # Convenience name for target.
-franka_example_controllers_generate_messages_py: franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers_generate_messages_py.dir/rule
+franka_example_controllers_genpy: franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers_genpy.dir/rule
 
-.PHONY : franka_example_controllers_generate_messages_py
+.PHONY : franka_example_controllers_genpy
 
 # fast build rule for target.
-franka_example_controllers_generate_messages_py/fast:
-	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers_generate_messages_py.dir/build.make franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers_generate_messages_py.dir/build
-.PHONY : franka_example_controllers_generate_messages_py/fast
+franka_example_controllers_genpy/fast:
+	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers_genpy.dir/build.make franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers_genpy.dir/build
+.PHONY : franka_example_controllers_genpy/fast
+
+# Convenience name for target.
+franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers_gencpp.dir/rule:
+	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f CMakeFiles/Makefile2 franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers_gencpp.dir/rule
+.PHONY : franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers_gencpp.dir/rule
+
+# Convenience name for target.
+franka_example_controllers_gencpp: franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers_gencpp.dir/rule
+
+.PHONY : franka_example_controllers_gencpp
+
+# fast build rule for target.
+franka_example_controllers_gencpp/fast:
+	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers_gencpp.dir/build.make franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers_gencpp.dir/build
+.PHONY : franka_example_controllers_gencpp/fast
 
 # Convenience name for target.
 franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers_generate_messages_eus.dir/rule:
@@ -438,6 +333,21 @@ franka_example_controllers_generate_messages_lisp/fast:
 .PHONY : franka_example_controllers_generate_messages_lisp/fast
 
 # Convenience name for target.
+franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers_generate_messages_nodejs.dir/rule:
+	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f CMakeFiles/Makefile2 franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers_generate_messages_nodejs.dir/rule
+.PHONY : franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers_generate_messages_nodejs.dir/rule
+
+# Convenience name for target.
+franka_example_controllers_generate_messages_nodejs: franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers_generate_messages_nodejs.dir/rule
+
+.PHONY : franka_example_controllers_generate_messages_nodejs
+
+# fast build rule for target.
+franka_example_controllers_generate_messages_nodejs/fast:
+	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers_generate_messages_nodejs.dir/build.make franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers_generate_messages_nodejs.dir/build
+.PHONY : franka_example_controllers_generate_messages_nodejs/fast
+
+# Convenience name for target.
 franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers_genlisp.dir/rule:
 	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f CMakeFiles/Makefile2 franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers_genlisp.dir/rule
 .PHONY : franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers_genlisp.dir/rule
@@ -481,81 +391,6 @@ franka_example_controllers_gencfg: franka_ros/franka_example_controllers/CMakeFi
 franka_example_controllers_gencfg/fast:
 	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers_gencfg.dir/build.make franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers_gencfg.dir/build
 .PHONY : franka_example_controllers_gencfg/fast
-
-# Convenience name for target.
-franka_ros/franka_example_controllers/CMakeFiles/dynamic_reconfigure_generate_messages_nodejs.dir/rule:
-	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f CMakeFiles/Makefile2 franka_ros/franka_example_controllers/CMakeFiles/dynamic_reconfigure_generate_messages_nodejs.dir/rule
-.PHONY : franka_ros/franka_example_controllers/CMakeFiles/dynamic_reconfigure_generate_messages_nodejs.dir/rule
-
-# Convenience name for target.
-dynamic_reconfigure_generate_messages_nodejs: franka_ros/franka_example_controllers/CMakeFiles/dynamic_reconfigure_generate_messages_nodejs.dir/rule
-
-.PHONY : dynamic_reconfigure_generate_messages_nodejs
-
-# fast build rule for target.
-dynamic_reconfigure_generate_messages_nodejs/fast:
-	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f franka_ros/franka_example_controllers/CMakeFiles/dynamic_reconfigure_generate_messages_nodejs.dir/build.make franka_ros/franka_example_controllers/CMakeFiles/dynamic_reconfigure_generate_messages_nodejs.dir/build
-.PHONY : dynamic_reconfigure_generate_messages_nodejs/fast
-
-# Convenience name for target.
-franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers_generate_messages_nodejs.dir/rule:
-	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f CMakeFiles/Makefile2 franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers_generate_messages_nodejs.dir/rule
-.PHONY : franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers_generate_messages_nodejs.dir/rule
-
-# Convenience name for target.
-franka_example_controllers_generate_messages_nodejs: franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers_generate_messages_nodejs.dir/rule
-
-.PHONY : franka_example_controllers_generate_messages_nodejs
-
-# fast build rule for target.
-franka_example_controllers_generate_messages_nodejs/fast:
-	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers_generate_messages_nodejs.dir/build.make franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers_generate_messages_nodejs.dir/build
-.PHONY : franka_example_controllers_generate_messages_nodejs/fast
-
-# Convenience name for target.
-franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers.dir/rule:
-	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f CMakeFiles/Makefile2 franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers.dir/rule
-.PHONY : franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers.dir/rule
-
-# Convenience name for target.
-franka_example_controllers: franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers.dir/rule
-
-.PHONY : franka_example_controllers
-
-# fast build rule for target.
-franka_example_controllers/fast:
-	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers.dir/build.make franka_ros/franka_example_controllers/CMakeFiles/franka_example_controllers.dir/build
-.PHONY : franka_example_controllers/fast
-
-# Convenience name for target.
-franka_ros/franka_example_controllers/CMakeFiles/teleop_gripper_node.dir/rule:
-	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f CMakeFiles/Makefile2 franka_ros/franka_example_controllers/CMakeFiles/teleop_gripper_node.dir/rule
-.PHONY : franka_ros/franka_example_controllers/CMakeFiles/teleop_gripper_node.dir/rule
-
-# Convenience name for target.
-teleop_gripper_node: franka_ros/franka_example_controllers/CMakeFiles/teleop_gripper_node.dir/rule
-
-.PHONY : teleop_gripper_node
-
-# fast build rule for target.
-teleop_gripper_node/fast:
-	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f franka_ros/franka_example_controllers/CMakeFiles/teleop_gripper_node.dir/build.make franka_ros/franka_example_controllers/CMakeFiles/teleop_gripper_node.dir/build
-.PHONY : teleop_gripper_node/fast
-
-# Convenience name for target.
-franka_ros/franka_example_controllers/CMakeFiles/dynamic_reconfigure_generate_messages_cpp.dir/rule:
-	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f CMakeFiles/Makefile2 franka_ros/franka_example_controllers/CMakeFiles/dynamic_reconfigure_generate_messages_cpp.dir/rule
-.PHONY : franka_ros/franka_example_controllers/CMakeFiles/dynamic_reconfigure_generate_messages_cpp.dir/rule
-
-# Convenience name for target.
-dynamic_reconfigure_generate_messages_cpp: franka_ros/franka_example_controllers/CMakeFiles/dynamic_reconfigure_generate_messages_cpp.dir/rule
-
-.PHONY : dynamic_reconfigure_generate_messages_cpp
-
-# fast build rule for target.
-dynamic_reconfigure_generate_messages_cpp/fast:
-	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f franka_ros/franka_example_controllers/CMakeFiles/dynamic_reconfigure_generate_messages_cpp.dir/build.make franka_ros/franka_example_controllers/CMakeFiles/dynamic_reconfigure_generate_messages_cpp.dir/build
-.PHONY : dynamic_reconfigure_generate_messages_cpp/fast
 
 src/cartesian_impedance_example_controller.o: src/cartesian_impedance_example_controller.cpp.o
 
@@ -915,38 +750,27 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... install/strip"
-	@echo "... install/local"
-	@echo "... _franka_example_controllers_generate_messages_check_deps_JointTorqueComparison"
-	@echo "... franka_example_controllers_generate_messages"
 	@echo "... install"
-	@echo "... visualization_msgs_generate_messages_py"
 	@echo "... list_install_components"
-	@echo "... visualization_msgs_generate_messages_nodejs"
-	@echo "... franka_example_controllers_genpy"
-	@echo "... visualization_msgs_generate_messages_eus"
-	@echo "... visualization_msgs_generate_messages_lisp"
-	@echo "... visualization_msgs_generate_messages_cpp"
-	@echo "... dynamic_reconfigure_generate_messages_eus"
-	@echo "... dynamic_reconfigure_gencfg"
-	@echo "... franka_example_controllers_gencpp"
-	@echo "... dynamic_reconfigure_generate_messages_lisp"
-	@echo "... dynamic_reconfigure_generate_messages_py"
+	@echo "... rebuild_cache"
+	@echo "... edit_cache"
 	@echo "... test"
-	@echo "... franka_example_controllers_generate_messages_cpp"
+	@echo "... teleop_gripper_node"
+	@echo "... franka_example_controllers"
+	@echo "... franka_example_controllers_generate_messages"
+	@echo "... _franka_example_controllers_generate_messages_check_deps_JointTorqueComparison"
 	@echo "... franka_example_controllers_generate_messages_py"
+	@echo "... franka_example_controllers_generate_messages_cpp"
+	@echo "... franka_example_controllers_genpy"
+	@echo "... franka_example_controllers_gencpp"
+	@echo "... install/local"
 	@echo "... franka_example_controllers_generate_messages_eus"
 	@echo "... franka_example_controllers_geneus"
 	@echo "... franka_example_controllers_generate_messages_lisp"
+	@echo "... franka_example_controllers_generate_messages_nodejs"
 	@echo "... franka_example_controllers_genlisp"
 	@echo "... franka_example_controllers_gennodejs"
 	@echo "... franka_example_controllers_gencfg"
-	@echo "... dynamic_reconfigure_generate_messages_nodejs"
-	@echo "... franka_example_controllers_generate_messages_nodejs"
-	@echo "... franka_example_controllers"
-	@echo "... teleop_gripper_node"
-	@echo "... dynamic_reconfigure_generate_messages_cpp"
-	@echo "... edit_cache"
-	@echo "... rebuild_cache"
 	@echo "... src/cartesian_impedance_example_controller.o"
 	@echo "... src/cartesian_impedance_example_controller.i"
 	@echo "... src/cartesian_impedance_example_controller.s"

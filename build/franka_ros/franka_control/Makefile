@@ -68,6 +68,16 @@ install/local/fast: preinstall/fast
 	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
 .PHONY : install/local/fast
 
+# Special rule for the target list_install_components
+list_install_components:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"Unspecified\""
+.PHONY : list_install_components
+
+# Special rule for the target list_install_components
+list_install_components/fast: list_install_components
+
+.PHONY : list_install_components/fast
+
 # Special rule for the target install
 install: preinstall
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
@@ -80,15 +90,28 @@ install/fast: preinstall/fast
 	/usr/bin/cmake -P cmake_install.cmake
 .PHONY : install/fast
 
-# Special rule for the target list_install_components
-list_install_components:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"Unspecified\""
-.PHONY : list_install_components
+# Special rule for the target install/strip
+install/strip: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
+	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip
 
-# Special rule for the target list_install_components
-list_install_components/fast: list_install_components
+# Special rule for the target install/strip
+install/strip/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
+	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip/fast
 
-.PHONY : list_install_components/fast
+# Special rule for the target test
+test:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running tests..."
+	/usr/bin/ctest --force-new-ctest-process $(ARGS)
+.PHONY : test
+
+# Special rule for the target test
+test/fast: test
+
+.PHONY : test/fast
 
 # Special rule for the target rebuild_cache
 rebuild_cache:
@@ -111,29 +134,6 @@ edit_cache:
 edit_cache/fast: edit_cache
 
 .PHONY : edit_cache/fast
-
-# Special rule for the target test
-test:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running tests..."
-	/usr/bin/ctest --force-new-ctest-process $(ARGS)
-.PHONY : test
-
-# Special rule for the target test
-test/fast: test
-
-.PHONY : test/fast
-
-# Special rule for the target install/strip
-install/strip: preinstall
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
-	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
-.PHONY : install/strip
-
-# Special rule for the target install/strip
-install/strip/fast: preinstall/fast
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
-	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
-.PHONY : install/strip/fast
 
 # The main all target
 all: cmake_check_build_system
@@ -166,66 +166,6 @@ preinstall/fast:
 depend:
 	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
-
-# Convenience name for target.
-franka_ros/franka_control/CMakeFiles/franka_combined_control_node.dir/rule:
-	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f CMakeFiles/Makefile2 franka_ros/franka_control/CMakeFiles/franka_combined_control_node.dir/rule
-.PHONY : franka_ros/franka_control/CMakeFiles/franka_combined_control_node.dir/rule
-
-# Convenience name for target.
-franka_combined_control_node: franka_ros/franka_control/CMakeFiles/franka_combined_control_node.dir/rule
-
-.PHONY : franka_combined_control_node
-
-# fast build rule for target.
-franka_combined_control_node/fast:
-	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f franka_ros/franka_control/CMakeFiles/franka_combined_control_node.dir/build.make franka_ros/franka_control/CMakeFiles/franka_combined_control_node.dir/build
-.PHONY : franka_combined_control_node/fast
-
-# Convenience name for target.
-franka_ros/franka_control/CMakeFiles/franka_control_node.dir/rule:
-	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f CMakeFiles/Makefile2 franka_ros/franka_control/CMakeFiles/franka_control_node.dir/rule
-.PHONY : franka_ros/franka_control/CMakeFiles/franka_control_node.dir/rule
-
-# Convenience name for target.
-franka_control_node: franka_ros/franka_control/CMakeFiles/franka_control_node.dir/rule
-
-.PHONY : franka_control_node
-
-# fast build rule for target.
-franka_control_node/fast:
-	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f franka_ros/franka_control/CMakeFiles/franka_control_node.dir/build.make franka_ros/franka_control/CMakeFiles/franka_control_node.dir/build
-.PHONY : franka_control_node/fast
-
-# Convenience name for target.
-franka_ros/franka_control/CMakeFiles/tf2_msgs_generate_messages_py.dir/rule:
-	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f CMakeFiles/Makefile2 franka_ros/franka_control/CMakeFiles/tf2_msgs_generate_messages_py.dir/rule
-.PHONY : franka_ros/franka_control/CMakeFiles/tf2_msgs_generate_messages_py.dir/rule
-
-# Convenience name for target.
-tf2_msgs_generate_messages_py: franka_ros/franka_control/CMakeFiles/tf2_msgs_generate_messages_py.dir/rule
-
-.PHONY : tf2_msgs_generate_messages_py
-
-# fast build rule for target.
-tf2_msgs_generate_messages_py/fast:
-	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f franka_ros/franka_control/CMakeFiles/tf2_msgs_generate_messages_py.dir/build.make franka_ros/franka_control/CMakeFiles/tf2_msgs_generate_messages_py.dir/build
-.PHONY : tf2_msgs_generate_messages_py/fast
-
-# Convenience name for target.
-franka_ros/franka_control/CMakeFiles/tf2_msgs_generate_messages_nodejs.dir/rule:
-	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f CMakeFiles/Makefile2 franka_ros/franka_control/CMakeFiles/tf2_msgs_generate_messages_nodejs.dir/rule
-.PHONY : franka_ros/franka_control/CMakeFiles/tf2_msgs_generate_messages_nodejs.dir/rule
-
-# Convenience name for target.
-tf2_msgs_generate_messages_nodejs: franka_ros/franka_control/CMakeFiles/tf2_msgs_generate_messages_nodejs.dir/rule
-
-.PHONY : tf2_msgs_generate_messages_nodejs
-
-# fast build rule for target.
-tf2_msgs_generate_messages_nodejs/fast:
-	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f franka_ros/franka_control/CMakeFiles/tf2_msgs_generate_messages_nodejs.dir/build.make franka_ros/franka_control/CMakeFiles/tf2_msgs_generate_messages_nodejs.dir/build
-.PHONY : tf2_msgs_generate_messages_nodejs/fast
 
 # Convenience name for target.
 franka_ros/franka_control/CMakeFiles/controller_manager_msgs_generate_messages_cpp.dir/rule:
@@ -273,21 +213,6 @@ controller_manager_msgs_generate_messages_lisp/fast:
 .PHONY : controller_manager_msgs_generate_messages_lisp/fast
 
 # Convenience name for target.
-franka_ros/franka_control/CMakeFiles/tf2_msgs_generate_messages_cpp.dir/rule:
-	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f CMakeFiles/Makefile2 franka_ros/franka_control/CMakeFiles/tf2_msgs_generate_messages_cpp.dir/rule
-.PHONY : franka_ros/franka_control/CMakeFiles/tf2_msgs_generate_messages_cpp.dir/rule
-
-# Convenience name for target.
-tf2_msgs_generate_messages_cpp: franka_ros/franka_control/CMakeFiles/tf2_msgs_generate_messages_cpp.dir/rule
-
-.PHONY : tf2_msgs_generate_messages_cpp
-
-# fast build rule for target.
-tf2_msgs_generate_messages_cpp/fast:
-	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f franka_ros/franka_control/CMakeFiles/tf2_msgs_generate_messages_cpp.dir/build.make franka_ros/franka_control/CMakeFiles/tf2_msgs_generate_messages_cpp.dir/build
-.PHONY : tf2_msgs_generate_messages_cpp/fast
-
-# Convenience name for target.
 franka_ros/franka_control/CMakeFiles/controller_manager_msgs_generate_messages_nodejs.dir/rule:
 	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f CMakeFiles/Makefile2 franka_ros/franka_control/CMakeFiles/controller_manager_msgs_generate_messages_nodejs.dir/rule
 .PHONY : franka_ros/franka_control/CMakeFiles/controller_manager_msgs_generate_messages_nodejs.dir/rule
@@ -301,6 +226,21 @@ controller_manager_msgs_generate_messages_nodejs: franka_ros/franka_control/CMak
 controller_manager_msgs_generate_messages_nodejs/fast:
 	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f franka_ros/franka_control/CMakeFiles/controller_manager_msgs_generate_messages_nodejs.dir/build.make franka_ros/franka_control/CMakeFiles/controller_manager_msgs_generate_messages_nodejs.dir/build
 .PHONY : controller_manager_msgs_generate_messages_nodejs/fast
+
+# Convenience name for target.
+franka_ros/franka_control/CMakeFiles/franka_control_node.dir/rule:
+	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f CMakeFiles/Makefile2 franka_ros/franka_control/CMakeFiles/franka_control_node.dir/rule
+.PHONY : franka_ros/franka_control/CMakeFiles/franka_control_node.dir/rule
+
+# Convenience name for target.
+franka_control_node: franka_ros/franka_control/CMakeFiles/franka_control_node.dir/rule
+
+.PHONY : franka_control_node
+
+# fast build rule for target.
+franka_control_node/fast:
+	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f franka_ros/franka_control/CMakeFiles/franka_control_node.dir/build.make franka_ros/franka_control/CMakeFiles/franka_control_node.dir/build
+.PHONY : franka_control_node/fast
 
 # Convenience name for target.
 franka_ros/franka_control/CMakeFiles/controller_manager_msgs_generate_messages_py.dir/rule:
@@ -318,21 +258,6 @@ controller_manager_msgs_generate_messages_py/fast:
 .PHONY : controller_manager_msgs_generate_messages_py/fast
 
 # Convenience name for target.
-franka_ros/franka_control/CMakeFiles/tf2_msgs_generate_messages_eus.dir/rule:
-	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f CMakeFiles/Makefile2 franka_ros/franka_control/CMakeFiles/tf2_msgs_generate_messages_eus.dir/rule
-.PHONY : franka_ros/franka_control/CMakeFiles/tf2_msgs_generate_messages_eus.dir/rule
-
-# Convenience name for target.
-tf2_msgs_generate_messages_eus: franka_ros/franka_control/CMakeFiles/tf2_msgs_generate_messages_eus.dir/rule
-
-.PHONY : tf2_msgs_generate_messages_eus
-
-# fast build rule for target.
-tf2_msgs_generate_messages_eus/fast:
-	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f franka_ros/franka_control/CMakeFiles/tf2_msgs_generate_messages_eus.dir/build.make franka_ros/franka_control/CMakeFiles/tf2_msgs_generate_messages_eus.dir/build
-.PHONY : tf2_msgs_generate_messages_eus/fast
-
-# Convenience name for target.
 franka_ros/franka_control/CMakeFiles/franka_state_controller.dir/rule:
 	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f CMakeFiles/Makefile2 franka_ros/franka_control/CMakeFiles/franka_state_controller.dir/rule
 .PHONY : franka_ros/franka_control/CMakeFiles/franka_state_controller.dir/rule
@@ -348,94 +273,19 @@ franka_state_controller/fast:
 .PHONY : franka_state_controller/fast
 
 # Convenience name for target.
-franka_ros/franka_control/CMakeFiles/tf_generate_messages_cpp.dir/rule:
-	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f CMakeFiles/Makefile2 franka_ros/franka_control/CMakeFiles/tf_generate_messages_cpp.dir/rule
-.PHONY : franka_ros/franka_control/CMakeFiles/tf_generate_messages_cpp.dir/rule
+franka_ros/franka_control/CMakeFiles/franka_combined_control_node.dir/rule:
+	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f CMakeFiles/Makefile2 franka_ros/franka_control/CMakeFiles/franka_combined_control_node.dir/rule
+.PHONY : franka_ros/franka_control/CMakeFiles/franka_combined_control_node.dir/rule
 
 # Convenience name for target.
-tf_generate_messages_cpp: franka_ros/franka_control/CMakeFiles/tf_generate_messages_cpp.dir/rule
+franka_combined_control_node: franka_ros/franka_control/CMakeFiles/franka_combined_control_node.dir/rule
 
-.PHONY : tf_generate_messages_cpp
+.PHONY : franka_combined_control_node
 
 # fast build rule for target.
-tf_generate_messages_cpp/fast:
-	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f franka_ros/franka_control/CMakeFiles/tf_generate_messages_cpp.dir/build.make franka_ros/franka_control/CMakeFiles/tf_generate_messages_cpp.dir/build
-.PHONY : tf_generate_messages_cpp/fast
-
-# Convenience name for target.
-franka_ros/franka_control/CMakeFiles/tf2_msgs_generate_messages_lisp.dir/rule:
-	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f CMakeFiles/Makefile2 franka_ros/franka_control/CMakeFiles/tf2_msgs_generate_messages_lisp.dir/rule
-.PHONY : franka_ros/franka_control/CMakeFiles/tf2_msgs_generate_messages_lisp.dir/rule
-
-# Convenience name for target.
-tf2_msgs_generate_messages_lisp: franka_ros/franka_control/CMakeFiles/tf2_msgs_generate_messages_lisp.dir/rule
-
-.PHONY : tf2_msgs_generate_messages_lisp
-
-# fast build rule for target.
-tf2_msgs_generate_messages_lisp/fast:
-	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f franka_ros/franka_control/CMakeFiles/tf2_msgs_generate_messages_lisp.dir/build.make franka_ros/franka_control/CMakeFiles/tf2_msgs_generate_messages_lisp.dir/build
-.PHONY : tf2_msgs_generate_messages_lisp/fast
-
-# Convenience name for target.
-franka_ros/franka_control/CMakeFiles/tf_generate_messages_lisp.dir/rule:
-	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f CMakeFiles/Makefile2 franka_ros/franka_control/CMakeFiles/tf_generate_messages_lisp.dir/rule
-.PHONY : franka_ros/franka_control/CMakeFiles/tf_generate_messages_lisp.dir/rule
-
-# Convenience name for target.
-tf_generate_messages_lisp: franka_ros/franka_control/CMakeFiles/tf_generate_messages_lisp.dir/rule
-
-.PHONY : tf_generate_messages_lisp
-
-# fast build rule for target.
-tf_generate_messages_lisp/fast:
-	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f franka_ros/franka_control/CMakeFiles/tf_generate_messages_lisp.dir/build.make franka_ros/franka_control/CMakeFiles/tf_generate_messages_lisp.dir/build
-.PHONY : tf_generate_messages_lisp/fast
-
-# Convenience name for target.
-franka_ros/franka_control/CMakeFiles/tf_generate_messages_nodejs.dir/rule:
-	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f CMakeFiles/Makefile2 franka_ros/franka_control/CMakeFiles/tf_generate_messages_nodejs.dir/rule
-.PHONY : franka_ros/franka_control/CMakeFiles/tf_generate_messages_nodejs.dir/rule
-
-# Convenience name for target.
-tf_generate_messages_nodejs: franka_ros/franka_control/CMakeFiles/tf_generate_messages_nodejs.dir/rule
-
-.PHONY : tf_generate_messages_nodejs
-
-# fast build rule for target.
-tf_generate_messages_nodejs/fast:
-	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f franka_ros/franka_control/CMakeFiles/tf_generate_messages_nodejs.dir/build.make franka_ros/franka_control/CMakeFiles/tf_generate_messages_nodejs.dir/build
-.PHONY : tf_generate_messages_nodejs/fast
-
-# Convenience name for target.
-franka_ros/franka_control/CMakeFiles/tf_generate_messages_eus.dir/rule:
-	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f CMakeFiles/Makefile2 franka_ros/franka_control/CMakeFiles/tf_generate_messages_eus.dir/rule
-.PHONY : franka_ros/franka_control/CMakeFiles/tf_generate_messages_eus.dir/rule
-
-# Convenience name for target.
-tf_generate_messages_eus: franka_ros/franka_control/CMakeFiles/tf_generate_messages_eus.dir/rule
-
-.PHONY : tf_generate_messages_eus
-
-# fast build rule for target.
-tf_generate_messages_eus/fast:
-	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f franka_ros/franka_control/CMakeFiles/tf_generate_messages_eus.dir/build.make franka_ros/franka_control/CMakeFiles/tf_generate_messages_eus.dir/build
-.PHONY : tf_generate_messages_eus/fast
-
-# Convenience name for target.
-franka_ros/franka_control/CMakeFiles/tf_generate_messages_py.dir/rule:
-	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f CMakeFiles/Makefile2 franka_ros/franka_control/CMakeFiles/tf_generate_messages_py.dir/rule
-.PHONY : franka_ros/franka_control/CMakeFiles/tf_generate_messages_py.dir/rule
-
-# Convenience name for target.
-tf_generate_messages_py: franka_ros/franka_control/CMakeFiles/tf_generate_messages_py.dir/rule
-
-.PHONY : tf_generate_messages_py
-
-# fast build rule for target.
-tf_generate_messages_py/fast:
-	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f franka_ros/franka_control/CMakeFiles/tf_generate_messages_py.dir/build.make franka_ros/franka_control/CMakeFiles/tf_generate_messages_py.dir/build
-.PHONY : tf_generate_messages_py/fast
+franka_combined_control_node/fast:
+	cd /media/prabhav/SATA_SSD/dhruv/MTP-Real-Robot-Data-Collection/build && $(MAKE) -f franka_ros/franka_control/CMakeFiles/franka_combined_control_node.dir/build.make franka_ros/franka_control/CMakeFiles/franka_combined_control_node.dir/build
+.PHONY : franka_combined_control_node/fast
 
 src/franka_combined_control_node.o: src/franka_combined_control_node.cpp.o
 
@@ -525,30 +375,20 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... install/local"
-	@echo "... install"
-	@echo "... list_install_components"
-	@echo "... rebuild_cache"
-	@echo "... edit_cache"
-	@echo "... test"
-	@echo "... franka_combined_control_node"
-	@echo "... install/strip"
-	@echo "... franka_control_node"
-	@echo "... tf2_msgs_generate_messages_py"
-	@echo "... tf2_msgs_generate_messages_nodejs"
 	@echo "... controller_manager_msgs_generate_messages_cpp"
 	@echo "... controller_manager_msgs_generate_messages_eus"
+	@echo "... list_install_components"
+	@echo "... install"
 	@echo "... controller_manager_msgs_generate_messages_lisp"
-	@echo "... tf2_msgs_generate_messages_cpp"
 	@echo "... controller_manager_msgs_generate_messages_nodejs"
+	@echo "... install/strip"
+	@echo "... franka_control_node"
 	@echo "... controller_manager_msgs_generate_messages_py"
-	@echo "... tf2_msgs_generate_messages_eus"
 	@echo "... franka_state_controller"
-	@echo "... tf_generate_messages_cpp"
-	@echo "... tf2_msgs_generate_messages_lisp"
-	@echo "... tf_generate_messages_lisp"
-	@echo "... tf_generate_messages_nodejs"
-	@echo "... tf_generate_messages_eus"
-	@echo "... tf_generate_messages_py"
+	@echo "... franka_combined_control_node"
+	@echo "... test"
+	@echo "... rebuild_cache"
+	@echo "... edit_cache"
 	@echo "... src/franka_combined_control_node.o"
 	@echo "... src/franka_combined_control_node.i"
 	@echo "... src/franka_combined_control_node.s"

@@ -185,7 +185,7 @@ foreach(t ${franka_collector_EXPORTED_TARGETS})
   endif()
 endforeach()
 
-set(depends "roscpp;rospy;sensor_msgs;cv_bridge;std_srvs;franka_gripper;control_msgs;trajectory_msgs")
+set(depends "")
 foreach(depend ${depends})
   string(REPLACE " " ";" depend_list ${depend})
   # the package name of the dependency must be kept in a unique variable so that it is not overwritten in recursive calls

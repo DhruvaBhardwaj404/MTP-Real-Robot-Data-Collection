@@ -16,7 +16,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package()
 
 catkin_install_python(PROGRAMS
-  scripts/franka_data_collector.py
-  scripts/franka_replay_moveit.py
+  src/franka_data_collector.py
+  src/franka_replay_moveit.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
