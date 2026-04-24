@@ -185,8 +185,8 @@ class ControlledDataCollector:
 
         np.savez_compressed(
             filename,
-            images1        = np.stack([d[0] for d in self.collected_data]),
-            images2        = np.stack([d[1] for d in self.collected_data]),
+            images1        = np.stack([d[0] for d in self.collected_data]),  #EIH
+            images2        = np.stack([d[1] for d in self.collected_data]),  #EXT
             joints         = np.stack([d[2] for d in self.collected_data]),
             joint_velocities = np.stack([d[3] for d in self.collected_data]),   # NEW
             gripper_pos    = np.stack([d[4] for d in self.collected_data]),
